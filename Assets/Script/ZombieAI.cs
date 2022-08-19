@@ -14,7 +14,7 @@ public class ZombieAI : MonoBehaviour
 
     private int limit;
 
-    private GameObject startTile;
+    public GameObject startTile;
 
     private void Awake()
     {
@@ -26,8 +26,7 @@ public class ZombieAI : MonoBehaviour
         limit = 0;
         tile_interval = 1;
 
-        startTile = GameObject.Find("StartTile");
-        transform.position = startTile.transform.position + new Vector3(0,2,0);
+        transform.position = startTile.transform.position;
     }
 
     
@@ -35,15 +34,20 @@ public class ZombieAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKey(KeyCode.Space))
-        {
-            Pacing();
-        }
+
     }
 
-    private void Pacing()
+    public void Pacing()
     {
         int direction = Random.Range(0, 4);
+
+        if(limit == 4)
+        {
+            limit = 0;
+            Debug.Log("limit!");
+            return;
+        }
+
         switch(direction)
         {
             case 0:
@@ -86,7 +90,6 @@ public class ZombieAI : MonoBehaviour
                     }
                     else
                     {
-
                         limit++;
                         Pacing();
                     }
@@ -186,24 +189,24 @@ public class ZombieAI : MonoBehaviour
         {
             case Direction.LEFT:
                 {
-                    myNv.destination = transform.position + (Vector3.right * -tile_interval);
+                    myNv.destination = new Vector3(transform.position.x-tile_interval, transform.position.y, transform.position.z);
                     break;
                 }
             case Direction.RIGHT:
                 {
-                    myNv.destination = transform.position + (Vector3.right * tile_interval);
+                    myNv.destination = new Vector3(transform.position.x+tile_interval, transform.position.y, transform.position.z);
                     break;
 
                 }
             case Direction.UP:
                 {
-                    myNv.destination = transform.position + (Vector3.up * tile_interval);
+                    myNv.destination = new Vector3(transform.position.x , transform.position.y , transform.position.z + tile_interval);
                     break;
 
                 }
             case Direction.DOWN:
                 {
-                    myNv.destination = transform.position + (Vector3.down * -tile_interval);
+                    myNv.destination = new Vector3(transform.position.x , transform.position.y , transform.position.z - tile_interval);
                     break;
                 }
         }

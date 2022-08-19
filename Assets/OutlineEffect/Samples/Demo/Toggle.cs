@@ -21,12 +21,12 @@ namespace cakeslice
                 GetComponent<Outline>().enabled = !GetComponent<Outline>().enabled;
             }
 
-            if(Input.GetKeyDown(KeyCode.L))
+            else if(Input.GetKeyDown(KeyCode.L))
             {
                 GetComponent<Outline>().color = 1;
             }
 
-            if (Input.GetKeyDown(KeyCode.K))
+            else if (Input.GetKeyDown(KeyCode.K))
             {
                 GetComponent<Outline>().color = 0;
             }

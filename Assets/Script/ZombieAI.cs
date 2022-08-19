@@ -6,15 +6,19 @@ using UnityEngine.AI;
 public class ZombieAI : MonoBehaviour
 {
     private enum Direction { LEFT, RIGHT, UP, DOWN};
-    private enum State { Pace, Trace, Attack};
+    public enum State { Pace, Trace, Attack};
 
     private NavMeshAgent myNv;
 
-    public int tile_interval;
+    public float tile_interval;
 
     private int limit;
 
     public GameObject startTile;
+
+    public GameObject tracingTarget;
+
+    State currentState;
 
     private void Awake()
     {
@@ -23,10 +27,17 @@ public class ZombieAI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // 이동 결정 limit (4 이상 시 턴 종료)
         limit = 0;
-        tile_interval = 1;
 
+        // 다음 진행할 상태
+        currentState = 0;
+
+        // 초기 시작 위치
         transform.position = startTile.transform.position;
+
+        // 추격 대상
+        tracingTarget = null;
     }
 
     
@@ -37,6 +48,36 @@ public class ZombieAI : MonoBehaviour
 
     }
 
+    public void TurnPlaying()
+    {
+        switch(currentState)
+        {
+            case State.Pace:
+            {
+                Pacing();
+                break;
+            }
+            case State.Trace:
+            {
+                Tracing();
+                break;
+            }
+            case State.Attack:
+            {
+                Attacking();
+                break;
+            }
+        }
+    }    
+
+    public void SetState(State st, GameObject target)
+    {
+        currentState = st;
+
+        tracingTarget = target;
+    }
+
+    // 서성거림 로직
     public void Pacing()
     {
         int direction = Random.Range(0, 4);
@@ -54,7 +95,7 @@ public class ZombieAI : MonoBehaviour
                 {
                     if (Moveable(Direction.LEFT))
                     {
-                        Debug.Log("Left");
+                        //Debug.Log("Left");
                         BasicMove(Direction.LEFT);
                         limit = 0;
                     }
@@ -69,7 +110,7 @@ public class ZombieAI : MonoBehaviour
                 {
                     if (Moveable(Direction.RIGHT))
                     {
-                        Debug.Log("Right");
+                        //Debug.Log("Right");
                         BasicMove(Direction.RIGHT);
                         limit = 0;
                     }
@@ -84,7 +125,7 @@ public class ZombieAI : MonoBehaviour
                 {
                     if (Moveable(Direction.UP))
                     {
-                        Debug.Log("Up");
+                        //Debug.Log("Up");
                         BasicMove(Direction.UP);
                         limit = 0;
                     }
@@ -99,7 +140,7 @@ public class ZombieAI : MonoBehaviour
                 {
                     if (Moveable(Direction.DOWN))
                     {
-                        Debug.Log("Down");
+                        //Debug.Log("Down");
                         BasicMove(Direction.DOWN);
                         limit = 0;
                     }
@@ -211,6 +252,41 @@ public class ZombieAI : MonoBehaviour
                 }
         }
     }
+
+    // 추격 로직
+    public void Tracing()
+    {
+        if(tracingTarget)
+        {
+            Direction xDir;
+            Direction yDir;
+            // x 동일 선상 위치
+            if(tracingTarget.transform.position.x == transform.position.x)
+            {
+                // 위에 위치
+                if(tracingTarget.transform.position.y > transform.position.y)
+                {
+                    BasicMove(Direction.UP);
+                }
+                // 아래 위치
+                else
+                {
+                    BasicMove(Direction.DOWN);
+                }
+            }
+            // y 동일 선상 위치
+            // 타겟이 우측 밑에 위치한 경우
+            // 타겟이 우측 위에 위치한 경우
+        }
+    }
+
+    // 공격 로직
+
+    public void Attacking()
+    {
+
+    }
+
 }
 //left: -
 //right : +

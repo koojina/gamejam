@@ -31,7 +31,7 @@ public class TurnManager : MonoBehaviour
         {
             for(int i = 0; i<zombiePrefab.Length; ++i)
             {
-                zombiePrefab[i].GetComponent<ZombieAI>().Pacing();
+                zombiePrefab[i].GetComponent<ZombieAI>().TurnPlaying();
             }
         }
     }

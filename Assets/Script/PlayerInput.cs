@@ -59,7 +59,7 @@ public class PlayerInput : MonoBehaviour
 
             if (new Vector3(transform.position.x,0,transform.position.z) == new Vector3 (myDestinationTile.transform.position.x, 0, myDestinationTile.transform.position.z))
             {
-                Debug.Log("arrive");
+                //Debug.Log("arrive");
                 //playerAnim.SetBool("IsMoving", false);
                 checkTurn = true;
             }

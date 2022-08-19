@@ -152,3 +152,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tile_interval: 1
+  startTile: {fileID: 0}

@@ -16,9 +16,19 @@ namespace cakeslice
         void Update()
         {
             //아웃라인 키는 부분
-            if(Input.GetKeyDown(KeyCode.K))
+            if(Input.GetKeyDown(KeyCode.J))
             {
                 GetComponent<Outline>().enabled = !GetComponent<Outline>().enabled;
+            }
+
+            if(Input.GetKeyDown(KeyCode.L))
+            {
+                GetComponent<Outline>().color = 1;
+            }
+
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+                GetComponent<Outline>().color = 0;
             }
         }
     }

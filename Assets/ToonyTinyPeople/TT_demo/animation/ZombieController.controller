@@ -45,7 +45,7 @@ AnimatorStateMachine:
     m_Position: {x: 661.53674, y: 32.014526, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -2682089559766863099}
-    m_Position: {x: 777.1899, y: -95.01428, z: 0}
+    m_Position: {x: 780, y: -100, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -65,7 +65,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: z_attack
+    m_ConditionEvent: isattack
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -491510514030674787}
@@ -117,7 +117,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: z_walk
+    m_ConditionEvent: iswalk
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -2682089559766863099}
@@ -142,7 +142,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: z_walk
+    m_ConditionEvent: iswalk
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -8744140886198371468}
@@ -194,13 +194,13 @@ AnimatorController:
   m_Name: ZombieController
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: z_walk
+  - m_Name: iswalk
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: z_attack
+  - m_Name: isattack
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -228,7 +228,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: z_attack
+    m_ConditionEvent: isattack
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -8744140886198371468}

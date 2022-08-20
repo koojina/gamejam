@@ -14,6 +14,7 @@ public class CameraController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         offset = transform.position - player.transform.position;
     }
     // Update is called once per frame
@@ -21,7 +22,7 @@ public class CameraController : MonoBehaviour
     {
         offset2 = player.transform.position + offset;
         float x = Mathf.Clamp(offset2.x, xMin, xMax);
-       // float z = Mathf.Clamp(offset2.z, zMin, zMax);
-        transform.position = new Vector3( x,transform.position.y , offset2.z);
+        float z = Mathf.Clamp(offset2.z, zMin, zMax);
+        transform.position = new Vector3(offset2.x, transform.position.y , offset2.z);
     }
 }

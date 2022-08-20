@@ -11,7 +11,7 @@ public class PlayerInput : MonoBehaviour
 
     private Rigidbody playerRb;
     private NavMeshAgent playerNb;
-    //private Animator playerAnim;
+    private Animator playerAnim;
 
     // 현재 향하는 목적지 
     private GameObject myDestinationTile;
@@ -36,7 +36,7 @@ public class PlayerInput : MonoBehaviour
     {  
         playerRb = GetComponent<Rigidbody>();
         playerNb = GetComponent<NavMeshAgent>();
-        //playerAnim = GetComponent<Animator>();
+        playerAnim = GetComponent<Animator>();
     }
 
     // Start is called before the first frame update
@@ -52,6 +52,12 @@ public class PlayerInput : MonoBehaviour
         myTurnManager.SettingZombieArray();
 
         useItem = false;
+
+        playerNb.updateRotation = false;
+
+        playerNb.height = 0.5f;
+
+        playerNb.baseOffset = 0.05f;
     }
 
     // Update is called once per frame
@@ -63,30 +69,24 @@ public class PlayerInput : MonoBehaviour
         }
         else if (!checkTurn)
         {
-            //Debug.Log("Moving");
-
-            //if (new Vector3(transform.position.x,0,transform.position.z) == new Vector3 (myDestinationTile.transform.position.x, 0, myDestinationTile.transform.position.z))
-            //{
-                if(!playerNb.pathPending)
+            if (!playerNb.pathPending)
                 {
                     if(playerNb.remainingDistance<=playerNb.stoppingDistance)
                     {
-                        if(!playerNb.hasPath || playerNb.velocity.sqrMagnitude == 0f)
+                        if(!playerNb.hasPath /*|| playerNb.velocity.sqrMagnitude <= 0f*/)
                         {
                             StartCoroutine(WaitForSecond(0.3f));
                         }
                     }
                 }
-            //Debug.Log("arrive");
-            //playerAnim.SetBool("IsMoving", false);
-            //checkTurn = true;
-            //}
         }
     }
     IEnumerator WaitForSecond(float Second)
     {
         yield return new WaitForSeconds(Second);
         checkTurn = true;
+        playerAnim.SetBool("walk", false);
+        playerAnim.SetBool("item", false);
     }
 
 
@@ -96,7 +96,8 @@ public class PlayerInput : MonoBehaviour
         {
             if (CheckWalkable(MoveDirection.LEFT))
             {
-                //playerAnim.SetBool("IsMoving", true);
+                transform.rotation = Quaternion.Euler(0, 450, 0);
+                playerAnim.SetBool("walk", true);
                 myTurnManager.SetZombieTurn(true);
                 checkTurn = false;
             }
@@ -105,7 +106,8 @@ public class PlayerInput : MonoBehaviour
         {
             if (CheckWalkable(MoveDirection.RIGHT))
             {
-                //playerAnim.SetBool("IsMoving", true);
+                transform.rotation = Quaternion.Euler(0, 270, 0);
+                playerAnim.SetBool("walk", true);
                 myTurnManager.SetZombieTurn(true);
                 checkTurn = false;
             }
@@ -114,7 +116,8 @@ public class PlayerInput : MonoBehaviour
         {
             if (CheckWalkable(MoveDirection.UP))
             {
-                //playerAnim.SetBool("IsMoving", true);
+                transform.rotation = Quaternion.Euler(0, 180, 0);
+                playerAnim.SetBool("walk", true);
                 myTurnManager.SetZombieTurn(true);
                 checkTurn = false;
             }
@@ -123,7 +126,8 @@ public class PlayerInput : MonoBehaviour
         {
             if (CheckWalkable(MoveDirection.DOWN))
             {
-                //playerAnim.SetBool("IsMoving", true);
+                transform.rotation = Quaternion.Euler(0, 360, 0);
+                playerAnim.SetBool("walk", true);
                 myTurnManager.SetZombieTurn(true);
             }
         }
@@ -131,11 +135,16 @@ public class PlayerInput : MonoBehaviour
         {
             if(ITEM_cellphone)
             {
-                Instantiate(ITEM_cellphone, new Vector3(transform.position.x, transform.position.y, transform.position.z + (-3 * tile_interval)), Quaternion.identity);
-                checkTurn = false;
-                StartCoroutine(WaitForSecond(1.0f));
+                playerAnim.SetBool("item", true);
+                StartCoroutine(WaitAttack());
             }
         }
+    }
+    IEnumerator WaitAttack()
+    {
+        yield return new WaitForSeconds(0.8f);
+        Instantiate(ITEM_cellphone, new Vector3(transform.position.x, transform.position.y, transform.position.z + (-3 * tile_interval)), Quaternion.identity);
+        checkTurn = false;
     }
 
     private bool CheckWalkable(MoveDirection direction)

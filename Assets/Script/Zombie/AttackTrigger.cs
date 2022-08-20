@@ -24,7 +24,7 @@ public class AttackTrigger : MonoBehaviour
     {
         if(other.gameObject.tag == "Player"&& activeMode == true)
         {
-            Debug.Log("플레이어 사망");
+            zombie.GetComponent<Animator>().SetBool("z_attack", true);
         }
     }
 }

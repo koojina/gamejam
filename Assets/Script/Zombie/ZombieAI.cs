@@ -28,9 +28,12 @@ public class ZombieAI : MonoBehaviour
 
     public GameObject[] RangeBox;
 
+    private Animator anim;
+
     private void Awake()
     {
         myNv = GetComponent<NavMeshAgent>();   
+        anim = GetComponent<Animator>();    
     }
     // Start is called before the first frame update
     void Start()
@@ -50,15 +53,28 @@ public class ZombieAI : MonoBehaviour
 
         // 眠拜 措惑
         tracingTarget = null;
+
+        myNv.updateRotation = false;
+
     }
 
-    
+
 
     // Update is called once per frame
     void Update()
     {
-
+        if (!myNv.pathPending)
+        {
+            if (myNv.remainingDistance <= myNv.stoppingDistance)
+            {
+                if (!myNv.hasPath || myNv.velocity.sqrMagnitude <= 0f)
+                {
+                anim.SetBool("iswalk", false);
+            }
+        }
+        }
     }
+
 
     public void TurnPlaying()
     {
@@ -350,6 +366,9 @@ public class ZombieAI : MonoBehaviour
         {
             case Direction.LEFT:
                 {
+                    transform.rotation = Quaternion.Euler(0, 270, 0);
+
+                    anim.SetBool("iswalk", true);
                     //Debug.Log("格利瘤");
                     //Debug.Log(new Vector3(transform.position.x - tile_interval, transform.position.y, transform.position.z));
                     myNv.destination = new Vector3(transform.position.x-tile_interval, transform.position.y, transform.position.z);
@@ -358,6 +377,9 @@ public class ZombieAI : MonoBehaviour
                 }
             case Direction.RIGHT:
                 {
+                    transform.rotation = Quaternion.Euler(0, 450, 0);
+
+                    anim.SetBool("iswalk", true);
                     //Debug.Log("格利瘤");
                     //Debug.Log(new Vector3(transform.position.x + tile_interval, transform.position.y, transform.position.z));
                     myNv.destination = new Vector3(transform.position.x+tile_interval, transform.position.y, transform.position.z);
@@ -367,6 +389,9 @@ public class ZombieAI : MonoBehaviour
                 }
             case Direction.UP:
                 {
+                    transform.rotation = Quaternion.Euler(0, 360, 0);
+
+                    anim.SetBool("iswalk", true);
                     //Debug.Log("格利瘤");
                     //Debug.Log(new Vector3(transform.position.x, transform.position.y, transform.position.z + tile_interval));
                     myNv.destination = new Vector3(transform.position.x , transform.position.y , transform.position.z + tile_interval);
@@ -376,6 +401,9 @@ public class ZombieAI : MonoBehaviour
                 }
             case Direction.DOWN:
                 {
+                    transform.rotation = Quaternion.Euler(0, 180, 0);
+
+                    anim.SetBool("iswalk", true);
                     //Debug.Log("格利瘤");
                     //Debug.Log(new Vector3(transform.position.x, transform.position.y, transform.position.z - tile_interval));
                     myNv.destination = new Vector3(transform.position.x , transform.position.y , transform.position.z - tile_interval);
@@ -935,6 +963,7 @@ public class ZombieAI : MonoBehaviour
     {
         yield return new WaitForSeconds(0.3f);
         atkTrigger.GetComponent<AttackTrigger>().activeMode = true;
+        anim.SetBool("isattack", false);
     }
 }
 //left: -

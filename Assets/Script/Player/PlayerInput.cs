@@ -73,7 +73,7 @@ public class PlayerInput : MonoBehaviour
                     {
                         if(!playerNb.hasPath || playerNb.velocity.sqrMagnitude == 0f)
                         {
-                            StartCoroutine(WaitForSecond());
+                            StartCoroutine(WaitForSecond(0.3f));
                         }
                     }
                 }
@@ -83,9 +83,9 @@ public class PlayerInput : MonoBehaviour
             //}
         }
     }
-    IEnumerator WaitForSecond()
+    IEnumerator WaitForSecond(float Second)
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(Second);
         checkTurn = true;
     }
 
@@ -133,7 +133,7 @@ public class PlayerInput : MonoBehaviour
             {
                 Instantiate(ITEM_cellphone, new Vector3(transform.position.x, transform.position.y, transform.position.z + (-3 * tile_interval)), Quaternion.identity);
                 checkTurn = false;
-                StartCoroutine(WaitForSecond());
+                StartCoroutine(WaitForSecond(1.0f));
             }
         }
     }

@@ -233,10 +233,22 @@ public class ZombieAI : MonoBehaviour
                     Debug.DrawRay(transform.transform.position + (Vector3.right * -tile_interval), Vector3.down, Color.green,5.0f);
 
                     Physics.Raycast(transform.transform.position + (Vector3.right * -tile_interval), Vector3.down, out hit, 5.0f);
-                    
-                    if(hit.collider.gameObject.layer == 6)
+
+
+                    if (hit.collider.gameObject.layer == 6 )
                     {
-                        return true;
+                        RaycastHit hit2;
+
+                        Debug.DrawRay(transform.transform.position, Vector3.left, Color.red, 1.2f);
+
+                        if (Physics.Raycast(transform.transform.position, Vector3.left, out hit2, 1.2f))
+                        {
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
+                        }
                     }
                     else
                     {
@@ -253,7 +265,18 @@ public class ZombieAI : MonoBehaviour
 
                     if (hit.collider.gameObject.layer == 6)
                     {
-                        return true;
+                        RaycastHit hit2;
+
+                        Debug.DrawRay(transform.transform.position, Vector3.right, Color.red, 1.2f);
+
+                        if (Physics.Raycast(transform.transform.position, Vector3.right, out hit2, 1.2f))
+                        {
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
+                        }
                     }
                     else
                     {
@@ -270,7 +293,18 @@ public class ZombieAI : MonoBehaviour
 
                     if (hit.collider.gameObject.layer == 6)
                     {
-                        return true;
+                        RaycastHit hit2;
+
+                        Debug.DrawRay(transform.transform.position, Vector3.forward, Color.red, 1.2f);
+
+                        if (Physics.Raycast(transform.transform.position, Vector3.forward, out hit2, 1.2f))
+                        {
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
+                        }
                     }
                     else
                     {
@@ -287,7 +321,18 @@ public class ZombieAI : MonoBehaviour
 
                     if (hit.collider.gameObject.layer == 6)
                     {
-                        return true;
+                        RaycastHit hit2;
+
+                        Debug.DrawRay(transform.transform.position, Vector3.back, Color.red, 1.2f);
+
+                        if (Physics.Raycast(transform.transform.position, Vector3.back, out hit2, 1.2f))
+                        {
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
+                        }
                     }
                     else
                     {
@@ -864,6 +909,10 @@ public class ZombieAI : MonoBehaviour
                     }
                 }
 
+        }
+        else
+        {
+            Pacing();
         }
     }
 

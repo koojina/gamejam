@@ -34,7 +34,7 @@ public class TurnManager : MonoBehaviour
     {
         if(setTurn)
         {
-
+            Debug.Log(cellPhone);
             if(cellPhone)
             {
                 cellPhone.GetComponent<CellPhoneItem>().CountingTurn();
@@ -57,15 +57,7 @@ public class TurnManager : MonoBehaviour
         }
         SetZombieTurn(true);
     }
-    public void DestroyCellPhoneItem()
-    {
-        Debug.Log(zombiePrefab.Length);
-        for (int i = 0; i < zombiePrefab.Length; i++)
-        {
-            zombiePrefab[i].GetComponent<ZombieAI>().SetState(ZombieAI.State.Pace, null);
-        }
-        SetZombieTurn(true);
-    }
+
     //public bool GetZombieTurn()
     //{
     //    return isTurn;

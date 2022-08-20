@@ -31,10 +31,10 @@ public class CellPhoneItem : MonoBehaviour
     public void CountingTurn()
     {
         remainTurn--;
+        Debug.Log(remainTurn);  
         if(remainTurn <= 0)
         {
-            myTurnManager.DestroyCellPhoneItem();
-
+            //myTurnManager.DestroyCellPhoneItem();
             Destroy(gameObject);
         }
     }

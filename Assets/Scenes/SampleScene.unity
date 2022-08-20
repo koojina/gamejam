@@ -6943,7 +6943,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6516591599747481209, guid: 2793a0e0c6c4ead40ac6e6e30cf3f6a0, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6516591599747481210, guid: 2793a0e0c6c4ead40ac6e6e30cf3f6a0, type: 3}
       propertyPath: m_RootOrder
@@ -8499,7 +8499,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6516591599747481209, guid: 2793a0e0c6c4ead40ac6e6e30cf3f6a0, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6516591599747481210, guid: 2793a0e0c6c4ead40ac6e6e30cf3f6a0, type: 3}
       propertyPath: m_RootOrder
@@ -21894,7 +21894,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isTurn: 0
   turnCount: 0
-  cellPhone: {fileID: 7101716954733439313, guid: a7c3870195e26dc40872d9c38b4d8252, type: 3}
+  cellPhone: {fileID: 0}
 --- !u!1001 &1735390575
 PrefabInstance:
   m_ObjectHideFlags: 0

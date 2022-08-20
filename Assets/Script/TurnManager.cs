@@ -8,6 +8,7 @@ public class TurnManager : MonoBehaviour
 
     public bool isTurn;
 
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -31,12 +32,13 @@ public class TurnManager : MonoBehaviour
         {
             for(int i = 0; i<zombiePrefab.Length; ++i)
             {
+                zombiePrefab[i].GetComponent<ZombieAI>().IsTurn = true;
                 zombiePrefab[i].GetComponent<ZombieAI>().TurnPlaying();
             }
         }
     }
-    public bool GetZombieTurn()
-    {
-        return isTurn;
-    }
+    //public bool GetZombieTurn()
+    //{
+    //    return isTurn;
+    //}
 }

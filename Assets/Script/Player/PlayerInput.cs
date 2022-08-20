@@ -27,8 +27,7 @@ public class PlayerInput : MonoBehaviour
     public float tile_interval;
 
     TurnManager myTurnManager;
-
-
+   
     private void Awake()
     {  
         playerRb = GetComponent<Rigidbody>();
@@ -39,7 +38,10 @@ public class PlayerInput : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        myDestinationTile = null;
+
         myTurnManager = GameObject.Find("TurnManager").GetComponent<TurnManager>();
+
         transform.position = StartTile.transform.position;
 
         // 맵 이동할때 사용할 것.
@@ -64,7 +66,6 @@ public class PlayerInput : MonoBehaviour
                 checkTurn = true;
             }
         }
-
     }
 
     void PlayerMovement()

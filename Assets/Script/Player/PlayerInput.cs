@@ -32,11 +32,14 @@ public class PlayerInput : MonoBehaviour
 
     private bool useItem;
 
+    private AudioSource myaudio;
+
     private void Awake()
     {  
         playerRb = GetComponent<Rigidbody>();
         playerNb = GetComponent<NavMeshAgent>();
         playerAnim = GetComponent<Animator>();
+        myaudio = GetComponent<AudioSource>();  
     }
 
     // Start is called before the first frame update
@@ -58,6 +61,8 @@ public class PlayerInput : MonoBehaviour
         playerNb.height = 0.5f;
 
         playerNb.baseOffset = 0.05f;
+
+        checkTurn = true;
     }
 
     // Update is called once per frame
@@ -67,18 +72,20 @@ public class PlayerInput : MonoBehaviour
         {
             PlayerMovement();
         }
-        else if (!checkTurn)
+        else
         {
-            if (!playerNb.pathPending)
-                {
-                    if(playerNb.remainingDistance<=playerNb.stoppingDistance)
-                    {
-                        if(!playerNb.hasPath /*|| playerNb.velocity.sqrMagnitude <= 0f*/)
-                        {
-                            StartCoroutine(WaitForSecond(0.3f));
-                        }
-                    }
-                }
+            StartCoroutine(WaitForSecond(1.0f));
+            //if (!playerNb.pathPending)
+            //    {
+            //        if(playerNb.remainingDistance<=playerNb.stoppingDistance)
+            //        {
+            //            if(!playerNb.hasPath || playerNb.velocity.sqrMagnitude <= 0f)
+            //            {
+            //                StartCoroutine(WaitForSecond(0.3f));
+            //            }
+            //        }
+            //    }
+
         }
     }
     IEnumerator WaitForSecond(float Second)
@@ -92,43 +99,48 @@ public class PlayerInput : MonoBehaviour
 
     void PlayerMovement()
     {
-        if (Input.GetKeyDown(KeyCode.A))     //Left (anim:1)
+        if (Input.GetKeyDown(KeyCode.A) && playerNb.velocity.sqrMagnitude <= 0f)     //Left (anim:1)
         {
             if (CheckWalkable(MoveDirection.LEFT))
             {
+                myaudio.Play();
                 transform.rotation = Quaternion.Euler(0, 450, 0);
                 playerAnim.SetBool("walk", true);
                 myTurnManager.SetZombieTurn(true);
                 checkTurn = false;
             }
         }
-        if (Input.GetKeyDown(KeyCode.D))    //Right (anim:2)
+        if (Input.GetKeyDown(KeyCode.D) && playerNb.velocity.sqrMagnitude <= 0f)    //Right (anim:2)
         {
             if (CheckWalkable(MoveDirection.RIGHT))
             {
+                myaudio.Play();
                 transform.rotation = Quaternion.Euler(0, 270, 0);
                 playerAnim.SetBool("walk", true);
                 myTurnManager.SetZombieTurn(true);
                 checkTurn = false;
             }
         }
-        if (Input.GetKeyDown(KeyCode.W))    //Up (anim:3)
+        if (Input.GetKeyDown(KeyCode.W) && playerNb.velocity.sqrMagnitude <= 0f)    //Up (anim:3)
         {
             if (CheckWalkable(MoveDirection.UP))
             {
+                myaudio.Play();
                 transform.rotation = Quaternion.Euler(0, 180, 0);
                 playerAnim.SetBool("walk", true);
                 myTurnManager.SetZombieTurn(true);
                 checkTurn = false;
             }
         }
-        if (Input.GetKeyDown(KeyCode.S))    //Down (anim:4)
+        if (Input.GetKeyDown(KeyCode.S) && playerNb.velocity.sqrMagnitude <= 0f)    //Down (anim:4)
         {
             if (CheckWalkable(MoveDirection.DOWN))
             {
+                myaudio.Play();
                 transform.rotation = Quaternion.Euler(0, 360, 0);
                 playerAnim.SetBool("walk", true);
                 myTurnManager.SetZombieTurn(true);
+                checkTurn = false;
             }
         }
         if (Input.GetMouseButtonDown(0))

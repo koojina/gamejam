@@ -5,29 +5,33 @@ using UnityEngine.SceneManagement;
 public class NextLevelTrigger : MonoBehaviour
 {
     Fade myFade;
+
+    public string levelName;
+
     // Start is called before the first frame update
     void Start()
     {
-        myFade = this.GetComponent<Fade>();    
+        myFade = GetComponent<Fade>();
+        Debug.Log(myFade);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if(collision.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player")
         {
             // 페이드 인/아웃
-            myFade.FadeInStart();
+            StartCoroutine(myFade.FadeOutStart());
             StartCoroutine(OpenLevel());
         }
     }
     IEnumerator OpenLevel()
     {
-        yield return new WaitForSeconds(0.5f);
-        SceneManager.LoadScene("2Stage");
+        yield return new WaitForSeconds(2.0f);
+        SceneManager.LoadScene(levelName);
     }
 }

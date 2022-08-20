@@ -7281,7 +7281,7 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &584041144
+--- !u!114 &584041147
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -7290,7 +7290,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 584041137}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae32275277529604db4fd1f92cba8845, type: 3}
+  m_Script: {fileID: 11500000, guid: 20a56240c53125440b3559e79358764c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   tile_interval: 1

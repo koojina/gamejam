@@ -21,21 +21,21 @@ public class Item : MonoBehaviour
             outline = col.gameObject.GetComponent<Outline>();
             outline.eraseRenderer = false;
             outline.color = 1;
-            activeCheck = true;
+          
         }
     }
     void OnTriggerStay(Collider col)
     {
-        if (Input.GetKey(KeyCode.A)|| Input.GetKey(KeyCode.S)|| Input.GetKey(KeyCode.D)|| Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.A)|| Input.GetKey(KeyCode.S)|| Input.GetKey(KeyCode.D)|| Input.GetKey(KeyCode.W)|| activeCheck)
         {
             if (col.gameObject.CompareTag("Tile"))
             {
                 outline = col.gameObject.GetComponent<Outline>();
                 outline.eraseRenderer = true;
                 outline.color = 1;
-                activeCheck = false;
+              
                 this.gameObject.SetActive(false);
-
+               
             }
         }
     }

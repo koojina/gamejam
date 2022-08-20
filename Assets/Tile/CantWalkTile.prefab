@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1037219120900725394}
   - component: {fileID: 6941464521286854022}
   - component: {fileID: 5548697440261697172}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: CantWalkTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}

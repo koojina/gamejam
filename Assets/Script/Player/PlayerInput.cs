@@ -11,7 +11,7 @@ public class PlayerInput : MonoBehaviour
 
     private Rigidbody playerRb;
     private NavMeshAgent playerNb;
-    private Animator playerAnim;
+    //private Animator playerAnim;
 
     // 현재 향하는 목적지 
     private GameObject myDestinationTile;
@@ -19,7 +19,6 @@ public class PlayerInput : MonoBehaviour
 
     // 플레이어 턴 확인
     public bool checkTurn;
-    public bool checkItem;
 
     // 시작 타일 위치
     public GameObject StartTile;
@@ -29,25 +28,30 @@ public class PlayerInput : MonoBehaviour
 
     TurnManager myTurnManager;
 
-    private NavMeshAgent navMeshAgent;
+    public GameObject ITEM_cellphone;
+
+    private bool useItem;
+
     private void Awake()
     {  
         playerRb = GetComponent<Rigidbody>();
         playerNb = GetComponent<NavMeshAgent>();
-        playerAnim = GetComponent<Animator>();
-
-        navMeshAgent = GetComponent<NavMeshAgent>();
-        navMeshAgent.updateRotation = false;
+        //playerAnim = GetComponent<Animator>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        myDestinationTile = null;
+
         myTurnManager = GameObject.Find("TurnManager").GetComponent<TurnManager>();
+
         transform.position = StartTile.transform.position;
 
         // 맵 이동할때 사용할 것.
         myTurnManager.SettingZombieArray();
+
+        useItem = false;
     }
 
     // Update is called once per frame
@@ -61,76 +65,75 @@ public class PlayerInput : MonoBehaviour
         {
             //Debug.Log("Moving");
 
-            if (new Vector3(transform.position.x,0,transform.position.z) == new Vector3 (myDestinationTile.transform.position.x, 0, myDestinationTile.transform.position.z))
-            {
-                Debug.Log("arrive");
-                playerAnim.SetBool("walk", false);
-                checkTurn = true;
-            }
+            //if (new Vector3(transform.position.x,0,transform.position.z) == new Vector3 (myDestinationTile.transform.position.x, 0, myDestinationTile.transform.position.z))
+            //{
+                if(!playerNb.pathPending)
+                {
+                    if(playerNb.remainingDistance<=playerNb.stoppingDistance)
+                    {
+                        if(!playerNb.hasPath || playerNb.velocity.sqrMagnitude == 0f)
+                        {
+                            StartCoroutine(WaitForSecond(0.3f));
+                        }
+                    }
+                }
+            //Debug.Log("arrive");
+            //playerAnim.SetBool("IsMoving", false);
+            //checkTurn = true;
+            //}
         }
-
-        if(!checkItem)
-        {
-            playerAnim.SetBool("item", false);
-        }
-
+    }
+    IEnumerator WaitForSecond(float Second)
+    {
+        yield return new WaitForSeconds(Second);
+        checkTurn = true;
     }
 
-    //아이템 쓰는 부분 임시로 넣음
 
     void PlayerMovement()
     {
-        if (Input.GetKey(KeyCode.A))     //Left (anim:1)
+        if (Input.GetKeyDown(KeyCode.A))     //Left (anim:1)
         {
             if (CheckWalkable(MoveDirection.LEFT))
             {
-             
-                transform.rotation = Quaternion.Euler(0, 450, 0);              
-                playerAnim.SetBool("walk", true);
+                //playerAnim.SetBool("IsMoving", true);
                 myTurnManager.SetZombieTurn(true);
                 checkTurn = false;
             }
         }
-        if (Input.GetKey(KeyCode.D))    //Right (anim:2)
+        if (Input.GetKeyDown(KeyCode.D))    //Right (anim:2)
         {
             if (CheckWalkable(MoveDirection.RIGHT))
             {
-                transform.rotation = Quaternion.Euler(0, 270, 0);
-                playerAnim.SetBool("walk", true);
-
+                //playerAnim.SetBool("IsMoving", true);
                 myTurnManager.SetZombieTurn(true);
                 checkTurn = false;
             }
         }
-        if (Input.GetKey(KeyCode.W))    //Up (anim:3)
+        if (Input.GetKeyDown(KeyCode.W))    //Up (anim:3)
         {
             if (CheckWalkable(MoveDirection.UP))
             {
-                transform.rotation = Quaternion.Euler(0, 180, 0);
-                playerAnim.SetBool("walk", true);
-
+                //playerAnim.SetBool("IsMoving", true);
                 myTurnManager.SetZombieTurn(true);
                 checkTurn = false;
             }
         }
-        if (Input.GetKey(KeyCode.S))    //Down (anim:4)
+        if (Input.GetKeyDown(KeyCode.S))    //Down (anim:4)
         {
             if (CheckWalkable(MoveDirection.DOWN))
             {
-                transform.rotation = Quaternion.Euler(0, 360, 0);
-                playerAnim.SetBool("walk", true);
-
+                //playerAnim.SetBool("IsMoving", true);
                 myTurnManager.SetZombieTurn(true);
-                checkTurn = false;
             }
         }
-
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetMouseButtonDown(0))
         {
-            if (checkItem)
+            if(ITEM_cellphone)
             {
-                playerAnim.SetBool("item", true);
-                //checkItem = false;
+                Instantiate(ITEM_cellphone, new Vector3(transform.position.x, transform.position.y, transform.position.z + (-3 * tile_interval)), Quaternion.identity);
+                checkTurn = false;
+                StartCoroutine(WaitForSecond(1.0f));
             }
         }
     }
@@ -148,8 +151,9 @@ public class PlayerInput : MonoBehaviour
                     {
                         if (hit.collider.gameObject.layer == 6)
                         {
-                            playerNb.destination = hit.transform.position;
-                            myDestinationTile = hit.transform.gameObject;
+                            BasicMovement(hit.transform.position);
+                            //playerNb.destination = hit.transform.position;
+                            //myDestinationTile = hit.transform.gameObject;
                             return true;
                         }
                         else
@@ -173,8 +177,9 @@ public class PlayerInput : MonoBehaviour
                     {
                         if (hit.transform.gameObject.layer == 6)
                         {
-                            playerNb.destination = hit.transform.position;
-                            myDestinationTile = hit.transform.gameObject;
+                            BasicMovement(hit.transform.position);
+                            //playerNb.destination = hit.transform.position;
+                            //myDestinationTile = hit.transform.gameObject;
                             return true;
                         }
                         else
@@ -199,8 +204,9 @@ public class PlayerInput : MonoBehaviour
                     {
                         if (hit.transform.gameObject.layer == 6)
                         {
-                            playerNb.destination = hit.transform.position;
-                            myDestinationTile = hit.transform.gameObject;
+                            BasicMovement(hit.transform.position);
+                            //playerNb.destination = hit.transform.position;
+                            //myDestinationTile = hit.transform.gameObject;
                             return true;
                         }
                         else
@@ -223,8 +229,10 @@ public class PlayerInput : MonoBehaviour
                     {
                         if (hit.transform.gameObject.layer == 6)
                         {
-                            playerNb.destination = hit.transform.position;
-                            myDestinationTile = hit.transform.gameObject;
+                            BasicMovement(hit.transform.position);
+
+                            //playerNb.destination = hit.transform.position;
+                            //myDestinationTile = hit.transform.gameObject;
                             return true;
                         }
                         else
@@ -242,5 +250,8 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
-
+    private void BasicMovement(Vector3 destination)
+    {
+        playerNb.SetDestination(destination);
+    }
 }

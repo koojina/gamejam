@@ -8,10 +8,15 @@ public class TurnManager : MonoBehaviour
 
     public bool isTurn;
 
+    public int turnCount = 0;
+
+    public GameObject cellPhone;
     // Start is called before the first frame update
     void Start()
     {
         isTurn = false;
+
+        cellPhone = null;
     }
 
     // Update is called once per frame
@@ -29,14 +34,32 @@ public class TurnManager : MonoBehaviour
     {
         if(setTurn)
         {
+            Debug.Log(cellPhone);
+            if(cellPhone)
+            {
+                cellPhone.GetComponent<CellPhoneItem>().CountingTurn();
+            }
             for(int i = 0; i<zombiePrefab.Length; ++i)
             {
-                zombiePrefab[i].GetComponent<ZombieAI>().Pacing();
+                zombiePrefab[i].GetComponent<ZombieAI>().IsTurn = true;
+                zombiePrefab[i].GetComponent<ZombieAI>().TurnPlaying();
             }
         }
     }
-    public bool GetZombieTurn()
+
+    public void UseCellPhoneItem()
     {
-        return isTurn;
+        cellPhone = GameObject.FindWithTag("CellPhoneItem");
+
+        for(int i = 0; i< zombiePrefab.Length; i++)
+        {
+            zombiePrefab[i].GetComponent<ZombieAI>().SetState(ZombieAI.State.Trace, cellPhone);
+        }
+        SetZombieTurn(true);
     }
+
+    //public bool GetZombieTurn()
+    //{
+    //    return isTurn;
+    //}
 }

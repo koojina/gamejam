@@ -47,9 +47,14 @@ namespace cakeslice
 			SpriteRenderer = GetComponent<SpriteRenderer>();
 			MeshFilter = GetComponent<MeshFilter>();
 		}
+         void Start()
+        {
+			eraseRenderer = true;
+
+		}
 
 
-		[MenuItem("Tools/Assign Tile Script")]
+        [MenuItem("Tools/Assign Tile Script")]
 		public static void AssignTileScript()
 		{
 			GameObject[] tiles = GameObject.FindGameObjectsWithTag("Tile");

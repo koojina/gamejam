@@ -25,7 +25,7 @@
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
-
+using UnityEditor;
 namespace cakeslice
 {
 	[RequireComponent(typeof(Renderer))]
@@ -48,6 +48,17 @@ namespace cakeslice
 			MeshFilter = GetComponent<MeshFilter>();
 		}
 
+
+		[MenuItem("Tools/Assign Tile Script")]
+		public static void AssignTileScript()
+		{
+			GameObject[] tiles = GameObject.FindGameObjectsWithTag("Tile");
+
+			foreach (GameObject t in tiles)
+			{
+				t.AddComponent<Outline>();
+			}
+		}
 		void OnEnable()
 		{
 			OutlineEffect.Instance?.AddOutline(this);

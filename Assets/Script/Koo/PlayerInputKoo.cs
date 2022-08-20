@@ -29,15 +29,18 @@ public class PlayerInputKoo : MonoBehaviour
 
     TurnManager myTurnManager;
 
-    private NavMeshAgent navMeshAgent;
+    //private NavMeshAgent navMeshAgent;
     private void Awake()
     {
         playerRb = GetComponent<Rigidbody>();
         playerNb = GetComponent<NavMeshAgent>();
         playerAnim = GetComponent<Animator>();
 
-        navMeshAgent = GetComponent<NavMeshAgent>();
-        navMeshAgent.updateRotation = false;
+       // navMeshAgent = GetComponent<NavMeshAgent>();
+        playerNb.updateRotation = false;
+
+        playerNb.height = 0.5f;
+        playerNb.baseOffset = 0.05f;
     }
 
     // Start is called before the first frame update
@@ -126,8 +129,7 @@ public class PlayerInputKoo : MonoBehaviour
         {
            
                 playerAnim.SetBool("item", true);
-                
-            
+                         
         }
     }
 
@@ -140,7 +142,8 @@ public class PlayerInputKoo : MonoBehaviour
                     RaycastHit hit;
 
                     Physics.Raycast(transform.position + (Vector3.right * tile_interval), Vector3.down, out hit, 5.0f);
-                    if (hit.transform.gameObject != null)
+                    //if (hit.transform.gameObject != null)
+                    if (hit.collider != null)
                     {
                         if (hit.collider.gameObject.layer == 6)
                         {
@@ -165,7 +168,7 @@ public class PlayerInputKoo : MonoBehaviour
 
                     Physics.Raycast(transform.position + (Vector3.right * -tile_interval), Vector3.down, out hit, 5.0f);
 
-                    if (hit.transform.gameObject != null)
+                    if (hit.collider != null)
                     {
                         if (hit.transform.gameObject.layer == 6)
                         {
@@ -191,7 +194,7 @@ public class PlayerInputKoo : MonoBehaviour
 
                     Physics.Raycast(transform.position + (Vector3.forward * -tile_interval), Vector3.down, out hit, 5.0f);
 
-                    if (hit.transform.gameObject != null)
+                    if (hit.collider != null)
                     {
                         if (hit.transform.gameObject.layer == 6)
                         {
@@ -215,7 +218,7 @@ public class PlayerInputKoo : MonoBehaviour
                     RaycastHit hit;
 
                     Physics.Raycast(transform.position + (Vector3.forward * tile_interval), Vector3.down, out hit, 5.0f);
-                    if (hit.transform.gameObject != null)
+                    if (hit.collider != null)
                     {
                         if (hit.transform.gameObject.layer == 6)
                         {

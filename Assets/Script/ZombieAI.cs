@@ -16,6 +16,8 @@ public class ZombieAI : MonoBehaviour
 
     public GameObject startTile;
 
+   
+
     private void Awake()
     {
         myNv = GetComponent<NavMeshAgent>();   
@@ -27,6 +29,9 @@ public class ZombieAI : MonoBehaviour
         tile_interval = 1;
 
         transform.position = startTile.transform.position;
+
+        myNv.height = 0.5f;
+        myNv.baseOffset = 0.05f;
     }
 
 

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - camera2
   - Zombie
+  - Tile
   layers:
   - Default
   - TransparentFX

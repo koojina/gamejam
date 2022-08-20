@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Zombie
   - PlayerHitBox
+  - CellPhoneItem
   layers:
   - Default
   - TransparentFX

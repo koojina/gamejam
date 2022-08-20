@@ -27,7 +27,11 @@ public class PlayerInput : MonoBehaviour
     public float tile_interval;
 
     TurnManager myTurnManager;
-   
+
+    public GameObject ITEM_cellphone;
+
+    private bool useItem;
+
     private void Awake()
     {  
         playerRb = GetComponent<Rigidbody>();
@@ -46,6 +50,8 @@ public class PlayerInput : MonoBehaviour
 
         // 맵 이동할때 사용할 것.
         myTurnManager.SettingZombieArray();
+
+        useItem = false;
     }
 
     // Update is called once per frame
@@ -59,18 +65,34 @@ public class PlayerInput : MonoBehaviour
         {
             //Debug.Log("Moving");
 
-            if (new Vector3(transform.position.x,0,transform.position.z) == new Vector3 (myDestinationTile.transform.position.x, 0, myDestinationTile.transform.position.z))
-            {
-                //Debug.Log("arrive");
-                //playerAnim.SetBool("IsMoving", false);
-                checkTurn = true;
-            }
+            //if (new Vector3(transform.position.x,0,transform.position.z) == new Vector3 (myDestinationTile.transform.position.x, 0, myDestinationTile.transform.position.z))
+            //{
+                if(!playerNb.pathPending)
+                {
+                    if(playerNb.remainingDistance<=playerNb.stoppingDistance)
+                    {
+                        if(!playerNb.hasPath || playerNb.velocity.sqrMagnitude == 0f)
+                        {
+                            StartCoroutine(WaitForSecond());
+                        }
+                    }
+                }
+            //Debug.Log("arrive");
+            //playerAnim.SetBool("IsMoving", false);
+            //checkTurn = true;
+            //}
         }
     }
+    IEnumerator WaitForSecond()
+    {
+        yield return new WaitForSeconds(0.2f);
+        checkTurn = true;
+    }
+
 
     void PlayerMovement()
     {
-        if (Input.GetKey(KeyCode.A))     //Left (anim:1)
+        if (Input.GetKeyDown(KeyCode.A))     //Left (anim:1)
         {
             if (CheckWalkable(MoveDirection.LEFT))
             {
@@ -79,7 +101,7 @@ public class PlayerInput : MonoBehaviour
                 checkTurn = false;
             }
         }
-        if (Input.GetKey(KeyCode.D))    //Right (anim:2)
+        if (Input.GetKeyDown(KeyCode.D))    //Right (anim:2)
         {
             if (CheckWalkable(MoveDirection.RIGHT))
             {
@@ -88,7 +110,7 @@ public class PlayerInput : MonoBehaviour
                 checkTurn = false;
             }
         }
-        if (Input.GetKey(KeyCode.W))    //Up (anim:3)
+        if (Input.GetKeyDown(KeyCode.W))    //Up (anim:3)
         {
             if (CheckWalkable(MoveDirection.UP))
             {
@@ -97,22 +119,23 @@ public class PlayerInput : MonoBehaviour
                 checkTurn = false;
             }
         }
-        if (Input.GetKey(KeyCode.S))    //Down (anim:4)
+        if (Input.GetKeyDown(KeyCode.S))    //Down (anim:4)
         {
             if (CheckWalkable(MoveDirection.DOWN))
             {
                 //playerAnim.SetBool("IsMoving", true);
                 myTurnManager.SetZombieTurn(true);
-                checkTurn = false;
             }
         }
-        //if(Input.GetKey(KeyCode.Space))
-        //{
-        //    if(CheckItem("Bomb"))
-        //    {
-
-        //    }
-        //}
+        if (Input.GetMouseButtonDown(0))
+        {
+            if(ITEM_cellphone)
+            {
+                Instantiate(ITEM_cellphone, new Vector3(transform.position.x, transform.position.y, transform.position.z + (-3 * tile_interval)), Quaternion.identity);
+                checkTurn = false;
+                StartCoroutine(WaitForSecond());
+            }
+        }
     }
 
     private bool CheckWalkable(MoveDirection direction)
@@ -128,8 +151,9 @@ public class PlayerInput : MonoBehaviour
                     {
                         if (hit.collider.gameObject.layer == 6)
                         {
-                            playerNb.destination = hit.transform.position;
-                            myDestinationTile = hit.transform.gameObject;
+                            BasicMovement(hit.transform.position);
+                            //playerNb.destination = hit.transform.position;
+                            //myDestinationTile = hit.transform.gameObject;
                             return true;
                         }
                         else
@@ -153,8 +177,9 @@ public class PlayerInput : MonoBehaviour
                     {
                         if (hit.transform.gameObject.layer == 6)
                         {
-                            playerNb.destination = hit.transform.position;
-                            myDestinationTile = hit.transform.gameObject;
+                            BasicMovement(hit.transform.position);
+                            //playerNb.destination = hit.transform.position;
+                            //myDestinationTile = hit.transform.gameObject;
                             return true;
                         }
                         else
@@ -179,8 +204,9 @@ public class PlayerInput : MonoBehaviour
                     {
                         if (hit.transform.gameObject.layer == 6)
                         {
-                            playerNb.destination = hit.transform.position;
-                            myDestinationTile = hit.transform.gameObject;
+                            BasicMovement(hit.transform.position);
+                            //playerNb.destination = hit.transform.position;
+                            //myDestinationTile = hit.transform.gameObject;
                             return true;
                         }
                         else
@@ -203,8 +229,10 @@ public class PlayerInput : MonoBehaviour
                     {
                         if (hit.transform.gameObject.layer == 6)
                         {
-                            playerNb.destination = hit.transform.position;
-                            myDestinationTile = hit.transform.gameObject;
+                            BasicMovement(hit.transform.position);
+
+                            //playerNb.destination = hit.transform.position;
+                            //myDestinationTile = hit.transform.gameObject;
                             return true;
                         }
                         else
@@ -222,5 +250,8 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
-
+    private void BasicMovement(Vector3 destination)
+    {
+        playerNb.SetDestination(destination);
+    }
 }

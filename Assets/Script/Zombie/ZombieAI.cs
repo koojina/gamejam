@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class ZombieAI : MonoBehaviour
 {
     private enum Direction { LEFT, RIGHT, UP, DOWN};
-    public enum State { Pace, Trace, Attack};
+    public enum State { Idle, Pace, Trace, Attack};
 
     private NavMeshAgent myNv;
 
@@ -24,9 +24,9 @@ public class ZombieAI : MonoBehaviour
 
     public bool IsTurn;
 
-    public int atkDelay;
-
     public GameObject atkTrigger;
+
+    public GameObject[] RangeBox;
 
     private void Awake()
     {
@@ -35,6 +35,10 @@ public class ZombieAI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        transform.parent.transform.position = startTile.transform.position;
+
+        transform.localPosition = Vector3.zero;
+
         // 기본 턴 세팅 false
         IsTurn = false;
 
@@ -42,13 +46,7 @@ public class ZombieAI : MonoBehaviour
         limit = 0;
 
         // 다음 진행할 상태
-        currentState = 0;
-
-        // 어택 딜레이
-        atkDelay = 0;
-
-        // 초기 시작 위치
-        transform.position = startTile.transform.position;
+        currentState = State.Pace;
 
         // 추격 대상
         tracingTarget = null;
@@ -64,13 +62,21 @@ public class ZombieAI : MonoBehaviour
 
     public void TurnPlaying()
     {
+        Debug.Log(currentState);
+
         switch(currentState)
         {
+            case State.Idle:
+                {
+                    Idle();
+                    IsTurn = false;
+                    prevState = State.Idle;
+                    break;
+                }
             case State.Pace:
             {
                 Pacing();
                 IsTurn = false;
-                atkDelay = 0;
                 prevState = State.Pace;
                 break;
             }
@@ -78,7 +84,6 @@ public class ZombieAI : MonoBehaviour
             {
                 Tracing();
                 IsTurn = false;
-                atkDelay = 0;
                     prevState = State.Trace;
 
                     break;
@@ -101,6 +106,12 @@ public class ZombieAI : MonoBehaviour
 
         switch (st)
         {
+            case State.Idle:
+                {
+                    atkTrigger.GetComponent<AttackTrigger>().activeMode = false;
+                    prevState = State.Idle;
+                    break;
+                }
             case State.Pace:
                 {
                     atkTrigger.GetComponent<AttackTrigger>().activeMode = false;
@@ -124,6 +135,11 @@ public class ZombieAI : MonoBehaviour
     public State GetState()
     {
         return currentState;
+    }
+
+    public void Idle()
+    {
+
     }
 
     // 서성거림 로직
@@ -214,6 +230,8 @@ public class ZombieAI : MonoBehaviour
                 {
                     RaycastHit hit;
 
+                    Debug.DrawRay(transform.transform.position + (Vector3.right * -tile_interval), Vector3.down, Color.green,5.0f);
+
                     Physics.Raycast(transform.transform.position + (Vector3.right * -tile_interval), Vector3.down, out hit, 5.0f);
                     
                     if(hit.collider.gameObject.layer == 6)
@@ -228,6 +246,8 @@ public class ZombieAI : MonoBehaviour
             case Direction.RIGHT:
                 {
                     RaycastHit hit;
+
+                    Debug.DrawRay(transform.position + (Vector3.right * tile_interval), Vector3.down, Color.green, 5.0f);
 
                     Physics.Raycast(transform.position + (Vector3.right * tile_interval), Vector3.down, out hit, 5.0f);
 
@@ -244,6 +264,8 @@ public class ZombieAI : MonoBehaviour
                 {
                     RaycastHit hit;
 
+                    Debug.DrawRay(transform.position + (Vector3.forward * tile_interval), Vector3.down, Color.green, 5.0f);
+
                     Physics.Raycast(transform.position + (Vector3.forward * tile_interval), Vector3.down, out hit, 5.0f);
 
                     if (hit.collider.gameObject.layer == 6)
@@ -258,6 +280,8 @@ public class ZombieAI : MonoBehaviour
             case Direction.DOWN:
                 {
                     RaycastHit hit;
+
+                    Debug.DrawRay(transform.position + (Vector3.forward * -tile_interval), Vector3.down, Color.green, 5.0f);
 
                     Physics.Raycast(transform.position + (Vector3.forward * -tile_interval), Vector3.down, out hit, 5.0f);
 
@@ -281,24 +305,36 @@ public class ZombieAI : MonoBehaviour
         {
             case Direction.LEFT:
                 {
+                    //Debug.Log("목적지");
+                    //Debug.Log(new Vector3(transform.position.x - tile_interval, transform.position.y, transform.position.z));
                     myNv.destination = new Vector3(transform.position.x-tile_interval, transform.position.y, transform.position.z);
+                    //transform.Translate(new Vector3(transform.position.x - tile_interval, transform.position.y, transform.position.z));
                     break;
                 }
             case Direction.RIGHT:
                 {
+                    //Debug.Log("목적지");
+                    //Debug.Log(new Vector3(transform.position.x + tile_interval, transform.position.y, transform.position.z));
                     myNv.destination = new Vector3(transform.position.x+tile_interval, transform.position.y, transform.position.z);
+                    //transform.Translate(new Vector3(transform.position.x + tile_interval, transform.position.y, transform.position.z));
                     break;
 
                 }
             case Direction.UP:
                 {
+                    //Debug.Log("목적지");
+                    //Debug.Log(new Vector3(transform.position.x, transform.position.y, transform.position.z + tile_interval));
                     myNv.destination = new Vector3(transform.position.x , transform.position.y , transform.position.z + tile_interval);
+                    //transform.Translate(new Vector3(transform.position.x, transform.position.y, transform.position.z + tile_interval));
                     break;
 
                 }
             case Direction.DOWN:
                 {
+                    //Debug.Log("목적지");
+                    //Debug.Log(new Vector3(transform.position.x, transform.position.y, transform.position.z - tile_interval));
                     myNv.destination = new Vector3(transform.position.x , transform.position.y , transform.position.z - tile_interval);
+                    //transform.Translate(new Vector3(transform.position.x, transform.position.y, transform.position.z - tile_interval));
                     break;
                 }
         }
@@ -311,24 +347,261 @@ public class ZombieAI : MonoBehaviour
 
         if (tracingTarget)
         {
-            // x 동일 선상 위치
-            if(tracingTarget.transform.position.x == transform.position.x)
-            {
-                // 위에 위치
-                if(tracingTarget.transform.position.z > transform.position.z)
+                // x 동일 선상 위치
+                if (tracingTarget.transform.position.x == transform.position.x)
                 {
-                    if(Moveable(Direction.UP))
+                    // 위에 위치
+                    if (tracingTarget.transform.position.z > transform.position.z)
                     {
-                        BasicMove(Direction.UP);
+                        if (Moveable(Direction.UP))
+                        {
+                            BasicMove(Direction.UP);
+                        }
+                        else
+                        {
+                            int rand = Random.Range(0, 2);
+                            if (rand == 0)
+                            {
+                                if (Moveable(Direction.LEFT))
+                                {
+                                    BasicMove(Direction.LEFT);
+                                }
+                                else
+                                {
+                                    if (Moveable(Direction.RIGHT))
+                                    {
+                                        BasicMove(Direction.RIGHT);
+                                    }
+                                    else
+                                    {
+                                        return;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (Moveable(Direction.RIGHT))
+                                {
+                                    BasicMove(Direction.RIGHT);
+                                }
+                                else
+                                {
+                                    if (Moveable(Direction.LEFT))
+                                    {
+                                        BasicMove(Direction.LEFT);
+                                    }
+                                    else
+                                    {
+                                        return;
+                                    }
+                                }
+                            }
+                        }
                     }
+                    // 아래 위치
+                    else
+                    {
+                        if (Moveable(Direction.DOWN))
+                        {
+                            BasicMove(Direction.DOWN);
+                        }
+                        else
+                        {
+                            int rand = Random.Range(0, 2);
+                            if (rand == 0)
+                            {
+                                if (Moveable(Direction.LEFT))
+                                {
+                                    BasicMove(Direction.LEFT);
+                                }
+                                else
+                                {
+                                    BasicMove(Direction.RIGHT);
+                                }
+                            }
+                            else
+                            {
+                                if (Moveable(Direction.RIGHT))
+                                {
+                                    BasicMove(Direction.RIGHT);
+                                }
+                                else
+                                {
+                                    BasicMove(Direction.LEFT);
+                                }
+                            }
+                        }
+                    }
+                }
+                // y 동일 선상 위치
+                if (tracingTarget.transform.position.z == transform.position.z)
+                {
+                    // 우측에 위치
+                    if (tracingTarget.transform.position.x > transform.position.x)
+                    {
+                        if (Moveable(Direction.RIGHT))
+                        {
+                            BasicMove(Direction.RIGHT);
+                        }
+                        else
+                        {
+                            int rand = Random.Range(0, 2);
+                            if (rand == 0)
+                            {
+                                if (Moveable(Direction.UP))
+                                {
+                                    BasicMove(Direction.UP);
+                                }
+                                else
+                                {
+                                    if (Moveable(Direction.DOWN))
+                                    {
+                                        BasicMove(Direction.DOWN);
+                                    }
+                                    else
+                                    {
+                                        return;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (Moveable(Direction.DOWN))
+                                {
+                                    BasicMove(Direction.DOWN);
+                                }
+                                else
+                                {
+                                    if (Moveable(Direction.UP))
+                                    {
+                                        BasicMove(Direction.UP);
+                                    }
+                                    else
+                                    {
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // 좌측에 위치
+                    else
+                    {
+                        if (Moveable(Direction.LEFT))
+                        {
+                            BasicMove(Direction.LEFT);
+                        }
+                        else
+                        {
+                            int rand = Random.Range(0, 2);
+                            if (rand == 0)
+                            {
+                                if (Moveable(Direction.UP))
+                                {
+                                    BasicMove(Direction.UP);
+                                }
+                                else
+                                {
+                                    if (Moveable(Direction.DOWN))
+                                    {
+                                        BasicMove(Direction.DOWN);
+                                    }
+                                    else
+                                    {
+                                        return;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (Moveable(Direction.DOWN))
+                                {
+                                    BasicMove(Direction.DOWN);
+                                }
+                                else
+                                {
+                                    if (Moveable(Direction.UP))
+                                    {
+                                        BasicMove(Direction.UP);
+                                    }
+                                    else
+                                    {
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+                // 타겟이 우측 밑에 위치한 경우
+                if (tracingTarget.transform.position.x > transform.position.x && tracingTarget.transform.position.z < transform.position.z)
+                {
+                    float xpos, zpos;
+                    xpos = Mathf.Abs(tracingTarget.transform.position.x - transform.position.x);
+                    zpos = Mathf.Abs(tracingTarget.transform.position.z - transform.position.z);
+                    // 최적의 경로가 오른쪽
+                    if (xpos > zpos)
+                    {
+                        if (Moveable(Direction.RIGHT))
+                        {
+                            BasicMove(Direction.RIGHT);
+                        }
+                        else if (Moveable(Direction.DOWN))
+                        {
+                            BasicMove(Direction.DOWN);
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    // 최적의 경로가 아랫쪽
+                    else if (xpos < zpos)
+                    {
+                        if (Moveable(Direction.DOWN))
+                        {
+                            BasicMove(Direction.DOWN);
+                        }
+                        else if (Moveable(Direction.RIGHT))
+                        {
+                            BasicMove(Direction.RIGHT);
+                        }
+                        else
+                        {
+                            return;
+                        }
+
+                    }
+                    // 최적의 경로가 동일
                     else
                     {
                         int rand = Random.Range(0, 2);
-                        if(rand == 0)
+
+                        if (rand == 0)
                         {
-                            if(Moveable(Direction.LEFT))
+                            if (Moveable(Direction.RIGHT))
                             {
-                                BasicMove(Direction.LEFT);
+                                BasicMove(Direction.RIGHT);
+                            }
+                            else
+                            {
+                                if (Moveable(Direction.DOWN))
+                                {
+                                    BasicMove(Direction.DOWN);
+                                }
+                                else
+                                {
+                                    return;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (Moveable(Direction.DOWN))
+                            {
+                                BasicMove(Direction.DOWN);
                             }
                             else
                             {
@@ -342,11 +615,157 @@ public class ZombieAI : MonoBehaviour
                                 }
                             }
                         }
+                    }
+                }
+                // 타겟이 우측 위에 위치한 경우
+                if (tracingTarget.transform.position.x > transform.position.x && tracingTarget.transform.position.z > transform.position.z)
+                {
+                    float xpos, zpos;
+                    xpos = Mathf.Abs(tracingTarget.transform.position.x - transform.position.x);
+                    zpos = Mathf.Abs(tracingTarget.transform.position.z - transform.position.z);
+                    // 최적의 경로가 오른쪽
+                    if (xpos > zpos)
+                    {
+                        if (Moveable(Direction.RIGHT))
+                        {
+                            BasicMove(Direction.RIGHT);
+                        }
+                        else if (Moveable(Direction.UP))
+                        {
+                            BasicMove(Direction.UP);
+                        }
                         else
                         {
-                            if(Moveable(Direction.RIGHT))
+                            return;
+                        }
+                    }
+                    // 최적의 경로가 위쪽
+                    else if (xpos < zpos)
+                    {
+                        if (Moveable(Direction.UP))
+                        {
+                            BasicMove(Direction.UP);
+                        }
+                        else if (Moveable(Direction.RIGHT))
+                        {
+                            BasicMove(Direction.RIGHT);
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    // 최적의 경로가 동일
+                    else
+                    {
+                        int rand = Random.Range(0, 2);
+
+                        if (rand == 0)
+                        {
+                            if (Moveable(Direction.RIGHT))
                             {
                                 BasicMove(Direction.RIGHT);
+                            }
+                            else
+                            {
+                                if (Moveable(Direction.DOWN))
+                                {
+                                    BasicMove(Direction.DOWN);
+                                }
+                                else
+                                {
+                                    return;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (Moveable(Direction.DOWN))
+                            {
+                                BasicMove(Direction.DOWN);
+                            }
+                            else
+                            {
+                                if (Moveable(Direction.RIGHT))
+                                {
+                                    BasicMove(Direction.RIGHT);
+                                }
+                                else
+                                {
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                }
+                // 타겟이 좌측 밑에 위치한 경우                                                                                            
+                if (tracingTarget.transform.position.x < transform.position.x && tracingTarget.transform.position.z < transform.position.z)
+                {
+                    float xpos, zpos;
+                    xpos = Mathf.Abs(tracingTarget.transform.position.x - transform.position.x);
+                    zpos = Mathf.Abs(tracingTarget.transform.position.z - transform.position.z);
+                    // 최적의 경로가 좌측
+                    if (xpos > zpos)
+                    {
+                        if (Moveable(Direction.LEFT))
+                        {
+                            BasicMove(Direction.LEFT);
+                        }
+                        else if (Moveable(Direction.DOWN))
+                        {
+                            BasicMove(Direction.DOWN);
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    // 최적의 경로가 아랫쪽
+                    else if (xpos < zpos)
+                    {
+                        if (Moveable(Direction.DOWN))
+                        {
+                            BasicMove(Direction.DOWN);
+                        }
+                        else if (Moveable(Direction.LEFT))
+                        {
+                            BasicMove(Direction.LEFT);
+                        }
+                        else
+                        {
+                            return;
+                        }
+
+                    }
+                    // 최적의 경로가 동일
+                    else
+                    {
+                        int rand = Random.Range(0, 2);
+
+                        if (rand == 0)
+                        {
+                            if (Moveable(Direction.LEFT))
+                            {
+                                BasicMove(Direction.LEFT);
+                            }
+                            else
+                            {
+                                if (Moveable(Direction.DOWN))
+                                {
+                                    BasicMove(Direction.DOWN);
+                                }
+                                else
+                                {
+                                    return;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (Moveable(Direction.DOWN))
+                            {
+                                BasicMove(Direction.DOWN);
                             }
                             else
                             {
@@ -362,471 +781,88 @@ public class ZombieAI : MonoBehaviour
                         }
                     }
                 }
-                // 아래 위치
-                else
+                // 타겟이 좌측 위에 위치한 경우                                                                                            
+                if (tracingTarget.transform.position.x < transform.position.x && tracingTarget.transform.position.z > transform.position.z)
                 {
-                    if (Moveable(Direction.DOWN))
-                    {
-                        BasicMove(Direction.DOWN);
-                    }
-                    else
-                    {
-                        int rand = Random.Range(0, 2);
-                        if (rand == 0)
-                        {
-                            if (Moveable(Direction.LEFT))
-                            {
-                                BasicMove(Direction.LEFT);
-                            }
-                            else
-                            {
-                                BasicMove(Direction.RIGHT);
-                            }
-                        }
-                        else
-                        {
-                            if (Moveable(Direction.RIGHT))
-                            {
-                                BasicMove(Direction.RIGHT);
-                            }
-                            else
-                            {
-                                BasicMove(Direction.LEFT);
-                            }
-                        }
-                    }
-                }
-            }
-            // y 동일 선상 위치
-            if (tracingTarget.transform.position.z == transform.position.z)
-            {
-                // 우측에 위치
-                if (tracingTarget.transform.position.x > transform.position.x)
-                {
-                    if (Moveable(Direction.RIGHT))
-                    {
-                        BasicMove(Direction.RIGHT);
-                    }
-                    else
-                    {
-                        int rand = Random.Range(0, 2);
-                        if (rand == 0)
-                        {
-                            if (Moveable(Direction.UP))
-                            {
-                                BasicMove(Direction.UP);
-                            }
-                            else
-                            {
-                                if (Moveable(Direction.DOWN))
-                                {
-                                    BasicMove(Direction.DOWN);
-                                }
-                                else
-                                {
-                                    return;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (Moveable(Direction.DOWN))
-                            {
-                                BasicMove(Direction.DOWN);
-                            }
-                            else
-                            {
-                                if (Moveable(Direction.UP))
-                                {
-                                    BasicMove(Direction.UP);
-                                }
-                                else
-                                {
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-                // 좌측에 위치
-                else
-                {
-                    if (Moveable(Direction.LEFT))
-                    {
-                        BasicMove(Direction.LEFT);
-                    }
-                    else
-                    {
-                        int rand = Random.Range(0, 2);
-                        if (rand == 0)
-                        {
-                            if (Moveable(Direction.UP))
-                            {
-                                BasicMove(Direction.UP);
-                            }
-                            else
-                            {
-                                if (Moveable(Direction.DOWN))
-                                {
-                                    BasicMove(Direction.DOWN);
-                                }
-                                else
-                                {
-                                    return;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (Moveable(Direction.DOWN))
-                            {
-                                BasicMove(Direction.DOWN);
-                            }
-                            else
-                            {
-                                if (Moveable(Direction.UP))
-                                {
-                                    BasicMove(Direction.UP);
-                                }
-                                else
-                                {
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }
-
-            // 타겟이 우측 밑에 위치한 경우
-            if(tracingTarget.transform.position.x > transform.position.x && tracingTarget.transform.position.z < transform.position.z)
-            {
-                float xpos, zpos;
-                xpos = Mathf.Abs(tracingTarget.transform.position.x - transform.position.x);
-                zpos = Mathf.Abs(tracingTarget.transform.position.z - transform.position.z);
-                // 최적의 경로가 오른쪽
-                if(xpos > zpos)
-                {
-                    if(Moveable(Direction.RIGHT))
-                    {
-                        BasicMove(Direction.RIGHT);
-                    }
-                    else if(Moveable(Direction.DOWN))
-                    {
-                        BasicMove(Direction.DOWN);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-                // 최적의 경로가 아랫쪽
-                else if(xpos < zpos)
-                {
-                    if (Moveable(Direction.DOWN))
-                    {
-                        BasicMove(Direction.DOWN);
-                    }
-                    else if (Moveable(Direction.RIGHT))
-                    {
-                        BasicMove(Direction.RIGHT);
-                    }
-                    else
-                    {
-                        return;
-                    }
-
-                }
-                // 최적의 경로가 동일
-                else
-                {
-                    int rand = Random.Range(0, 2);
-
-                    if(rand == 0)
-                    {
-                        if(Moveable(Direction.RIGHT))
-                        {
-                            BasicMove(Direction.RIGHT);
-                        }
-                        else
-                        {
-                            if(Moveable(Direction.DOWN))
-                            {
-                                BasicMove(Direction.DOWN);
-                            }
-                            else
-                            {
-                                return;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (Moveable(Direction.DOWN))
-                        {
-                            BasicMove(Direction.DOWN);
-                        }
-                        else
-                        {
-                            if (Moveable(Direction.RIGHT))
-                            {
-                                BasicMove(Direction.RIGHT);
-                            }
-                            else
-                            {
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-            // 타겟이 우측 위에 위치한 경우
-            if (tracingTarget.transform.position.x > transform.position.x && tracingTarget.transform.position.z > transform.position.z)
-            {
-                float xpos, zpos;
-                xpos = Mathf.Abs(tracingTarget.transform.position.x - transform.position.x);
-                zpos = Mathf.Abs(tracingTarget.transform.position.z - transform.position.z);
-                // 최적의 경로가 오른쪽
-                if (xpos > zpos)
-                {
-                    if (Moveable(Direction.RIGHT))
-                    {
-                        BasicMove(Direction.RIGHT);
-                    }
-                    else if (Moveable(Direction.UP))
-                    {
-                        BasicMove(Direction.UP);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-                // 최적의 경로가 위쪽
-                else if (xpos < zpos)
-                {
-                    if (Moveable(Direction.UP))
-                    {
-                        BasicMove(Direction.UP);
-                    }
-                    else if (Moveable(Direction.RIGHT))
-                    {
-                        BasicMove(Direction.RIGHT);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-                // 최적의 경로가 동일
-                else
-                {
-                    int rand = Random.Range(0, 2);
-
-                    if (rand == 0)
-                    {
-                        if (Moveable(Direction.RIGHT))
-                        {
-                            BasicMove(Direction.RIGHT);
-                        }
-                        else
-                        {
-                            if (Moveable(Direction.DOWN))
-                            {
-                                BasicMove(Direction.DOWN);
-                            }
-                            else
-                            {
-                                return;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (Moveable(Direction.DOWN))
-                        {
-                            BasicMove(Direction.DOWN);
-                        }
-                        else
-                        {
-                            if (Moveable(Direction.RIGHT))
-                            {
-                                BasicMove(Direction.RIGHT);
-                            }
-                            else
-                            {
-                                return;
-                            }
-                        }
-                    }
-                }
-
-            }
-            // 타겟이 좌측 밑에 위치한 경우                                                                                            
-            if (tracingTarget.transform.position.x < transform.position.x && tracingTarget.transform.position.z < transform.position.z)
-            {
-                float xpos, zpos;
-                xpos = Mathf.Abs(tracingTarget.transform.position.x - transform.position.x);
-                zpos = Mathf.Abs(tracingTarget.transform.position.z - transform.position.z);
-                // 최적의 경로가 좌측
-                if (xpos > zpos)
-                {
-                    if (Moveable(Direction.LEFT))
-                    {
-                        BasicMove(Direction.LEFT);
-                    }
-                    else if (Moveable(Direction.DOWN))
-                    {
-                        BasicMove(Direction.DOWN);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-                // 최적의 경로가 아랫쪽
-                else if (xpos < zpos)
-                {
-                    if (Moveable(Direction.DOWN))
-                    {
-                        BasicMove(Direction.DOWN);
-                    }
-                    else if (Moveable(Direction.LEFT))
-                    {
-                        BasicMove(Direction.LEFT);
-                    }
-                    else
-                    {
-                        return;
-                    }
-
-                }
-                // 최적의 경로가 동일
-                else
-                {
-                    int rand = Random.Range(0, 2);
-
-                    if (rand == 0)
+                    float xpos, zpos;
+                    xpos = Mathf.Abs(tracingTarget.transform.position.x - transform.position.x);
+                    zpos = Mathf.Abs(tracingTarget.transform.position.z - transform.position.z);
+                    // 최적의 경로가 좌측
+                    if (xpos > zpos)
                     {
                         if (Moveable(Direction.LEFT))
                         {
                             BasicMove(Direction.LEFT);
                         }
-                        else
-                        {
-                            if (Moveable(Direction.DOWN))
-                            {
-                                BasicMove(Direction.DOWN);
-                            }
-                            else
-                            {
-                                return;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (Moveable(Direction.DOWN))
-                        {
-                            BasicMove(Direction.DOWN);
-                        }
-                        else
-                        {
-                            if (Moveable(Direction.LEFT))
-                            {
-                                BasicMove(Direction.LEFT);
-                            }
-                            else
-                            {
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-            // 타겟이 좌측 위에 위치한 경우                                                                                            
-            if (tracingTarget.transform.position.x < transform.position.x && tracingTarget.transform.position.z > transform.position.z)
-            {
-                float xpos, zpos;
-                xpos = Mathf.Abs(tracingTarget.transform.position.x - transform.position.x);
-                zpos = Mathf.Abs(tracingTarget.transform.position.z - transform.position.z);
-                // 최적의 경로가 좌측
-                if (xpos > zpos)
-                {
-                    if (Moveable(Direction.LEFT))
-                    {
-                        BasicMove(Direction.LEFT);
-                    }
-                    else if (Moveable(Direction.UP))
-                    {
-                        BasicMove(Direction.UP);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-                // 최적의 경로가 위쪽
-                else if (xpos < zpos)
-                {
-                    if (Moveable(Direction.UP))
-                    {
-                        BasicMove(Direction.UP);
-                    }
-                    else if (Moveable(Direction.LEFT))
-                    {
-                        BasicMove(Direction.LEFT);
-                    }
-                    else
-                    {
-                        return;
-                    }
-
-                }
-                // 최적의 경로가 동일
-                else
-                {
-                    int rand = Random.Range(0, 2);
-
-                    if (rand == 0)
-                    {
-                        if (Moveable(Direction.LEFT))
-                        {
-                            BasicMove(Direction.LEFT);
-                        }
-                        else
-                        {
-                            if (Moveable(Direction.UP))
-                            {
-                                BasicMove(Direction.UP);
-                            }
-                            else
-                            {
-                                return;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (Moveable(Direction.UP))
+                        else if (Moveable(Direction.UP))
                         {
                             BasicMove(Direction.UP);
                         }
                         else
                         {
+                            return;
+                        }
+                    }
+                    // 최적의 경로가 위쪽
+                    else if (xpos < zpos)
+                    {
+                        if (Moveable(Direction.UP))
+                        {
+                            BasicMove(Direction.UP);
+                        }
+                        else if (Moveable(Direction.LEFT))
+                        {
+                            BasicMove(Direction.LEFT);
+                        }
+                        else
+                        {
+                            return;
+                        }
+
+                    }
+                    // 최적의 경로가 동일
+                    else
+                    {
+                        int rand = Random.Range(0, 2);
+
+                        if (rand == 0)
+                        {
                             if (Moveable(Direction.LEFT))
                             {
                                 BasicMove(Direction.LEFT);
                             }
                             else
                             {
-                                return;
+                                if (Moveable(Direction.UP))
+                                {
+                                    BasicMove(Direction.UP);
+                                }
+                                else
+                                {
+                                    return;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (Moveable(Direction.UP))
+                            {
+                                BasicMove(Direction.UP);
+                            }
+                            else
+                            {
+                                if (Moveable(Direction.LEFT))
+                                {
+                                    BasicMove(Direction.LEFT);
+                                }
+                                else
+                                {
+                                    return;
+                                }
                             }
                         }
                     }
                 }
-            }
 
         }
     }

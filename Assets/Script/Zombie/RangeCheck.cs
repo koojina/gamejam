@@ -33,18 +33,19 @@ public class RangeCheck : MonoBehaviour
             if (state == ZombieAI.State.Attack)
             {
                 Debug.Log("공격 딜레이 실행");
-                zombie.atkDelay++;
             }
+        }
+        else if(other.gameObject.tag == "CellPhoneItem" && state == ZombieAI.State.Attack)
+        {
+            zombie.SetState(ZombieAI.State.Idle, null);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
         // 공격 범위에서 벗어난 경우 (추격 범위에는 적용X)
-        if(other.gameObject.tag == "Player"&& state == ZombieAI.State.Attack)
+        if(other.gameObject.tag == "Player" && state == ZombieAI.State.Attack)
         {
-            zombie.atkDelay = 0;
-
             zombie.SetState(ZombieAI.State.Trace, other.gameObject);
         }
     }

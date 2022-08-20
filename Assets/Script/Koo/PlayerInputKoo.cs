@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class PlayerInput : MonoBehaviour
+public class PlayerInputKoo : MonoBehaviour
 {
     [Header("플레이어 세팅")]
     [Range(0f, 10f)]
@@ -19,7 +19,7 @@ public class PlayerInput : MonoBehaviour
 
     // 플레이어 턴 확인
     public bool checkTurn;
-    public bool checkItem;
+
 
     // 시작 타일 위치
     public GameObject StartTile;
@@ -31,7 +31,7 @@ public class PlayerInput : MonoBehaviour
 
     private NavMeshAgent navMeshAgent;
     private void Awake()
-    {  
+    {
         playerRb = GetComponent<Rigidbody>();
         playerNb = GetComponent<NavMeshAgent>();
         playerAnim = GetComponent<Animator>();
@@ -61,7 +61,7 @@ public class PlayerInput : MonoBehaviour
         {
             //Debug.Log("Moving");
 
-            if (new Vector3(transform.position.x,0,transform.position.z) == new Vector3 (myDestinationTile.transform.position.x, 0, myDestinationTile.transform.position.z))
+            if (new Vector3(transform.position.x, 0, transform.position.z) == new Vector3(myDestinationTile.transform.position.x, 0, myDestinationTile.transform.position.z))
             {
                 Debug.Log("arrive");
                 playerAnim.SetBool("walk", false);
@@ -69,10 +69,7 @@ public class PlayerInput : MonoBehaviour
             }
         }
 
-        if(!checkItem)
-        {
-            playerAnim.SetBool("item", false);
-        }
+       
 
     }
 
@@ -84,8 +81,8 @@ public class PlayerInput : MonoBehaviour
         {
             if (CheckWalkable(MoveDirection.LEFT))
             {
-             
-                transform.rotation = Quaternion.Euler(0, 450, 0);              
+
+                transform.rotation = Quaternion.Euler(0, 450, 0);
                 playerAnim.SetBool("walk", true);
                 myTurnManager.SetZombieTurn(true);
                 checkTurn = false;
@@ -127,11 +124,10 @@ public class PlayerInput : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space))
         {
-            if (checkItem)
-            {
+           
                 playerAnim.SetBool("item", true);
-                //checkItem = false;
-            }
+                
+            
         }
     }
 
